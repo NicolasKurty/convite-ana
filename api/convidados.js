@@ -1,12 +1,8 @@
-import { Redis } from '@upstash/redis';
+import Redis from 'ioredis';
 
-// Aceita tanto os nomes de variável do Vercel Marketplace (KV_REST_API_*)
-// quanto os nomes originais do Upstash (UPSTASH_REDIS_REST_*), pra não
-// depender de qual nome a integração escolher ao ser instalada.
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+// Usa a variável REDIS_URL que a Vercel já criou ao conectar o banco
+// (formato redis://default:senha@host:porta)
+const redis = new Redis(process.env.REDIS_URL);
 
 const ADMIN_CODE = process.env.ADMIN_CODE || 'ac080826';
 const KEY = 'aniversario_ana_convidados';
@@ -19,6 +15,15 @@ function checkAdmin(req, res) {
   return true;
 }
 
+async function getList() {
+  const raw = await redis.get(KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function saveList(list) {
+  await redis.set(KEY, JSON.stringify(list));
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
@@ -26,16 +31,14 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    const list = (await redis.get(KEY)) || [];
+    const list = await getList();
 
-    // Lista os convidados que confirmaram presença — protegido por código
     if (req.method === 'GET') {
       if (!checkAdmin(req, res)) return;
       const confirmados = list.filter((g) => g.presenca === 'sim');
       return res.status(200).json(confirmados);
     }
 
-    // Registra uma nova confirmação de presença (rota pública, usada pelo formulário)
     if (req.method === 'POST') {
       const { nome, instagram, telefone, presenca } = req.body || {};
       if (!nome || !telefone || !presenca) {
@@ -50,11 +53,10 @@ export default async function handler(req, res) {
         criadoEm: Date.now(),
       };
       list.push(guest);
-      await redis.set(KEY, list);
+      await saveList(list);
       return res.status(201).json(guest);
     }
 
-    // Edita um convidado existente — protegido por código
     if (req.method === 'PUT') {
       if (!checkAdmin(req, res)) return;
       const { id, nome, instagram, telefone } = req.body || {};
@@ -66,16 +68,15 @@ export default async function handler(req, res) {
         instagram: instagram ?? list[idx].instagram,
         telefone: telefone ?? list[idx].telefone,
       };
-      await redis.set(KEY, list);
+      await saveList(list);
       return res.status(200).json(list[idx]);
     }
 
-    // Remove um convidado — protegido por código
     if (req.method === 'DELETE') {
       if (!checkAdmin(req, res)) return;
       const { id } = req.body || {};
       const next = list.filter((g) => g.id !== id);
-      await redis.set(KEY, next);
+      await saveList(next);
       return res.status(200).json({ ok: true });
     }
 
