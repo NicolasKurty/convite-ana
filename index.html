@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aniversário da Ana Carnelos — 20 anos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0d0710;
+    --bg-alt:#1a0f22;
+    --gold:#d4af37;
+    --gold-soft:#e9cf8a;
+    --gold-dim:#8a7226;
+    --rose:#e8a3ae;
+    --cream:#f6ecd9;
+    --ink:#f6ecd9;
+    --muted:#c9b9a8;
+    --danger:#c96a6a;
+    --radius:18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{background:var(--bg);}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(212,175,55,0.16), transparent 55%),
+      radial-gradient(ellipse at 85% 110%, rgba(232,163,174,0.10), transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+    color:var(--ink);
+    font-family:'Manrope', sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  .noise{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .particles{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+  .spark{
+    position:absolute; bottom:-10px; width:3px; height:3px; border-radius:50%;
+    background:var(--gold-soft); opacity:.55;
+    animation:rise linear infinite;
+    box-shadow:0 0 6px 1px rgba(212,175,55,.5);
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0); opacity:0;}
+    10%{opacity:.7;}
+    90%{opacity:.4;}
+    100%{transform:translateY(-110vh) translateX(20px); opacity:0;}
+  }
+
+  .app{position:relative; z-index:2; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px 16px;}
+  .screen{display:none; width:100%; max-width:480px; animation:fadeIn .7s ease both;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- Ornament ---------- */
+  .ornament{
+    width:64px; height:14px; margin:18px auto; position:relative;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .ornament::before,.ornament::after{
+    content:""; height:1px; width:22px; background:linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament::after{background:linear-gradient(90deg, var(--gold), transparent);}
+  .ornament span{width:5px; height:5px; border-radius:50%; background:var(--gold);}
+
+  /* ---------- Invite card (screen 1) ---------- */
+  .invite-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border:1px solid rgba(212,175,55,0.28);
+    border-radius:var(--radius);
+    padding:40px 28px 32px;
+    text-align:center;
+    backdrop-filter:blur(6px);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+  }
+  .eyebrow{
+    font-size:11px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold-soft); font-weight:600;
+  }
+  .display-name{
+    font-family:'Italiana', serif; font-size:clamp(32px,8.6vw,46px); line-height:1.08; color:var(--cream);
+    margin-top:10px; letter-spacing:.01em;
+  }
+  .display-sub{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:20px; color:var(--rose); margin-top:6px;
+  }
+  .invite-msg{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:19px; color:var(--muted);
+    margin:18px 0 6px; line-height:1.5;
+  }
+  .details{
+    margin-top:22px; display:flex; flex-direction:column; gap:18px; align-items:center; text-align:center;
+  }
+  .detail-row{
+    display:flex; flex-direction:column; align-items:center; gap:5px; font-size:14.5px; color:var(--ink);
+  }
+  .detail-icon{
+    flex:0 0 auto; width:20px; height:20px; color:var(--gold);
+  }
+  .detail-label{display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-dim); margin-bottom:1px;}
+  .detail-value{color:var(--cream); font-weight:500;}
+  .detail-value small{display:block; color:var(--muted); font-weight:400; font-size:12.5px; margin-top:3px;}
+
+  .tag-individual{
+    margin-top:20px; display:inline-block; font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--gold-soft); border:1px solid rgba(212,175,55,.4); border-radius:999px; padding:6px 14px;
+  }
+
+  /* ---------- Form ---------- */
+  .rsvp{margin-top:30px; text-align:left;}
+  .rsvp h2{
+    font-family:'Italiana', serif; font-weight:400; font-size:20px; text-align:center; color:var(--cream);
+    letter-spacing:.03em; margin-bottom:18px;
+  }
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;}
+  .field input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(212,175,55,.25);
+    background:rgba(255,255,255,.03); color:var(--cream); font-family:'Manrope'; font-size:14.5px;
+    outline:none; transition:border-color .2s, background .2s;
+  }
+  .field input::placeholder{color:#7d6f63;}
+  .field input:focus{border-color:var(--gold); background:rgba(212,175,55,.06);}
+  .field.error input{border-color:var(--danger);}
+  .field-error{font-size:12px; color:var(--danger); margin-top:5px; display:none;}
+  .field.error .field-error{display:block;}
+
+  .presence-toggle{display:flex; gap:10px; margin-bottom:18px;}
+  .presence-btn{
+    flex:1; padding:12px; border-radius:10px; border:1px solid rgba(212,175,55,.28);
+    background:transparent; color:var(--muted); font-family:'Manrope'; font-weight:600; font-size:13.5px;
+    letter-spacing:.03em; cursor:pointer; transition:all .2s;
+  }
+  .presence-btn:hover{border-color:var(--gold);}
+  .presence-btn.selected-yes{background:linear-gradient(135deg, var(--gold), #b8912a); color:#211405; border-color:var(--gold);}
+  .presence-btn.selected-no{background:rgba(201,106,106,.18); color:#f3c9c9; border-color:var(--danger);}
+
+  .submit-btn{
+    width:100%; padding:14px; border-radius:10px; border:none; cursor:pointer;
+    background:linear-gradient(135deg, var(--gold-soft), var(--gold));
+    color:#241704; font-weight:700; font-size:14.5px; letter-spacing:.04em; text-transform:uppercase;
+    transition:transform .15s, box-shadow .15s;
+    box-shadow:0 10px 24px -8px rgba(212,175,55,.5);
+  }
+  .submit-btn:hover{transform:translateY(-2px);}
+  .submit-btn:active{transform:translateY(0);}
+  .submit-btn:disabled{opacity:.6; cursor:default; transform:none;}
+  .form-note{font-size:12px; color:#8a7c6f; text-align:center; margin-top:12px;}
+  .admin-link{
+    display:block; margin:14px auto 0; background:none; border:none; cursor:pointer;
+    color:#5f5348; font-family:'Manrope'; font-size:11px; letter-spacing:.04em;
+    text-decoration:underline; text-underline-offset:3px; opacity:.7; transition:opacity .2s, color .2s;
+  }
+  .admin-link:hover{opacity:1; color:var(--gold-dim);}
+
+  /* ---------- Screen 2: envelope + confirmation ---------- */
+  .confirm-wrap{text-align:center;}
+  .envelope-scene{
+    width:230px; height:150px; margin:10px auto 0; position:relative; perspective:1200px;
+  }
+  .env-back{
+    position:absolute; inset:0; border-radius:8px;
+    background:linear-gradient(160deg, #3a2612, #1c1108);
+    border:1px solid rgba(212,175,55,.35);
+    box-shadow:0 25px 50px -18px rgba(0,0,0,.7);
+  }
+  .env-back::before,.env-back::after{
+    content:""; position:absolute; top:0; width:0; height:0;
+    border-top:75px solid transparent; border-bottom:75px solid transparent;
+  }
+  .env-back::before{left:0; border-left:0; border-right:115px solid rgba(212,175,55,.05);}
+  .env-back::after{right:0; border-right:0; border-left:115px solid rgba(0,0,0,.15);}
+
+  .env-letter{
+    position:absolute; left:22%; right:22%; top:20%; height:52%;
+    background:linear-gradient(180deg,#fffaf0,#f6ecd9);
+    border-radius:5px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center; padding:6px;
+    transform:translateY(6%); opacity:0; z-index:2;
+    transition:transform 1.1s cubic-bezier(.2,.8,.2,1) .4s, opacity .5s ease .4s;
+  }
+  .envelope-scene.opening .env-letter{transform:translateY(-72%); opacity:1;}
+  .env-letter-name{
+    font-family:'Caveat', cursive; font-weight:600; font-size:26px; color:#4a3016;
+    text-align:center; line-height:1.1; max-width:100%;
+    overflow-wrap:break-word;
+  }
+
+  .env-flap{
+    position:absolute; top:0; left:0; width:100%; height:55%;
+    background:linear-gradient(160deg, #4a3016, #241609);
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transform-origin:top center; z-index:3;
+    border-top:1px solid rgba(212,175,55,.35);
+    transition:transform .9s cubic-bezier(.4,0,.2,1);
+  }
+  .envelope-scene.opening .env-flap{transform:rotateX(180deg);}
+
+  .wax-half{
+    position:absolute; top:44%; left:50%; width:24px; height:24px;
+    background:radial-gradient(circle at 35% 30%, #e6c261, #a8791c 70%);
+    border-radius:50%; z-index:4;
+    box-shadow:0 2px 6px rgba(0,0,0,.4);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Italiana', serif; font-size:12px; color:#3a2408;
+    transition:transform .6s ease .1s, opacity .5s ease .3s;
+  }
+  .wax-half.l{transform:translate(-100%,-50%);}
+  .wax-half.r{transform:translate(0%,-50%);}
+  .envelope-scene.opening .wax-half.l{transform:translate(-260%,-90%) rotate(-25deg); opacity:0;}
+  .envelope-scene.opening .wax-half.r{transform:translate(160%,-90%) rotate(25deg); opacity:0;}
+
+  .confirm-card{
+    margin-top:34px; opacity:0; transform:translateY(14px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .confirm-card.show{opacity:1; transform:translateY(0);}
+  .check-badge{
+    width:46px; height:46px; margin:0 auto 14px; border-radius:50%;
+    background:rgba(212,175,55,.12); border:1px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .thanks-name{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:600;
+    color:var(--gold-soft); font-size:26px;
+  }
+  .thanks-title{
+    font-family:'Italiana', serif; font-size:28px; color:var(--cream); margin-top:4px;
+  }
+  .thanks-sub{color:var(--muted); font-size:14px; margin-top:8px; line-height:1.5;}
+  .addr-box{
+    margin-top:24px; text-align:center; background:rgba(255,255,255,.03);
+    border:1px solid rgba(212,175,55,.22); border-radius:12px; padding:18px;
+  }
+  .ics-btn{
+    margin-top:20px; display:inline-block; padding:11px 22px; border-radius:999px;
+    border:1px solid var(--gold); color:var(--gold-soft); font-size:13px; letter-spacing:.04em;
+    text-decoration:none; cursor:pointer; background:transparent; font-family:'Manrope'; font-weight:600;
+    transition:background .2s, color .2s;
+  }
+  .ics-btn:hover{background:var(--gold); color:#241704;}
+
+  /* decline */
+  .decline-card{text-align:center; padding:20px 8px;}
+  .decline-card .thanks-title{font-size:24px;}
+  .decline-card .thanks-sub{margin-top:12px;}
+
+  /* ---------- WhatsApp CTA ---------- */
+  .whatsapp-btn{
+    margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:13px; border-radius:10px; border:1px solid rgba(37,211,102,.5);
+    background:rgba(37,211,102,.1); color:#a9f0c4; font-family:'Manrope'; font-weight:600;
+    font-size:13.5px; text-decoration:none; transition:background .2s, transform .15s;
+  }
+  .whatsapp-btn:hover{background:rgba(37,211,102,.2); transform:translateY(-1px);}
+
+  /* ---------- Modal (código de acesso) ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:50; background:rgba(6,3,8,.72); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-box{
+    width:100%; max-width:340px; background:linear-gradient(180deg, #1c1120, #150c19);
+    border:1px solid rgba(212,175,55,.3); border-radius:16px; padding:28px 24px;
+    text-align:center; box-shadow:0 30px 60px -20px rgba(0,0,0,.7);
+  }
+  .modal-box h3{font-family:'Italiana', serif; font-size:20px; color:var(--cream); font-weight:400; margin-bottom:6px;}
+  .modal-box p{font-size:13px; color:var(--muted); margin-bottom:16px;}
+  .modal-box input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(212,175,55,.25);
+    background:rgba(255,255,255,.03); color:var(--cream); font-family:'Manrope'; font-size:14.5px;
+    outline:none; text-align:center; letter-spacing:.08em; margin-bottom:10px;
+  }
+  .modal-box input:focus{border-color:var(--gold);}
+  .modal-error{font-size:12px; color:var(--danger); min-height:16px; margin-bottom:8px;}
+  .modal-actions{display:flex; gap:10px; margin-top:4px;}
+  .modal-actions button{
+    flex:1; padding:11px; border-radius:10px; font-family:'Manrope'; font-weight:600; font-size:13px;
+    cursor:pointer; letter-spacing:.02em; transition:opacity .2s;
+  }
+  .modal-cancel{background:transparent; border:1px solid rgba(255,255,255,.15); color:var(--muted);}
+  .modal-confirm{background:linear-gradient(135deg, var(--gold-soft), var(--gold)); border:none; color:#241704;}
+  .modal-actions button:hover{opacity:.85;}
+
+  /* ---------- Painel de convidados ---------- */
+  .admin-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border:1px solid rgba(212,175,55,0.28); border-radius:var(--radius);
+    padding:28px 22px 30px; backdrop-filter:blur(6px);
+  }
+  .admin-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+  .admin-header h3{font-family:'Italiana', serif; font-size:22px; font-weight:400; color:var(--cream);}
+  .admin-close{background:none; border:none; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; padding:4px;}
+  .admin-count{
+    display:inline-block; margin:10px 0 18px; font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--gold-soft); border:1px solid rgba(212,175,55,.35); border-radius:999px; padding:6px 14px;
+  }
+  .admin-refresh{
+    background:none; border:1px solid rgba(212,175,55,.3); color:var(--gold-soft); border-radius:999px;
+    padding:6px 14px; font-size:12px; cursor:pointer; margin-left:8px; font-family:'Manrope';
+  }
+  .guest-list{display:flex; flex-direction:column; gap:10px; max-height:50vh; overflow-y:auto; padding-right:2px;}
+  .guest-item{
+    background:rgba(255,255,255,.03); border:1px solid rgba(212,175,55,.16); border-radius:12px; padding:14px;
+    text-align:left;
+  }
+  .guest-item .g-name{font-weight:700; color:var(--cream); font-size:14.5px;}
+  .guest-item .g-meta{font-size:12.5px; color:var(--muted); margin-top:3px; line-height:1.5;}
+  .guest-actions{display:flex; gap:8px; margin-top:10px;}
+  .guest-actions button{
+    flex:1; padding:8px; border-radius:8px; font-size:11.5px; font-weight:600; cursor:pointer;
+    font-family:'Manrope'; letter-spacing:.02em; border:1px solid rgba(212,175,55,.3);
+    background:transparent; color:var(--gold-soft);
+  }
+  .guest-actions .del-btn{border-color:rgba(201,106,106,.4); color:#f0b3b3;}
+  .guest-actions button:hover{background:rgba(212,175,55,.1);}
+  .guest-item.editing input{
+    width:100%; padding:8px 10px; margin-bottom:6px; border-radius:8px; border:1px solid rgba(212,175,55,.3);
+    background:rgba(255,255,255,.04); color:var(--cream); font-family:'Manrope'; font-size:13px; outline:none;
+  }
+  .admin-empty{text-align:center; color:var(--muted); font-size:13px; padding:24px 0;}
+  .admin-loading{text-align:center; color:var(--muted); font-size:13px; padding:24px 0;}
+
+  @media (max-width:380px){
+    .invite-card{padding:32px 18px 26px;}
+    .envelope-scene{width:190px; height:126px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001s !important; transition-duration:.001s !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="particles" id="particles"></div>
+
+<div class="app">
+
+  <!-- SCREEN 1: CONVITE + RSVP -->
+  <section class="screen active" id="screen-invite">
+    <div class="invite-card">
+      <div class="eyebrow">Você está convidado(a)</div>
+      <h1 class="display-name">Ana Carnelos</h1>
+      <div class="display-sub">completa 20 anos</div>
+      <div class="ornament"><span></span></div>
+      <p class="invite-msg">"Venha comemorar comigo! Uma noite para celebrar!"</p>
+
+      <div class="details">
+        <div class="detail-row">
+          <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          <div><span class="detail-label">Data</span><span class="detail-value">Sábado, 08/08</span></div>
+        </div>
+        <div class="detail-row">
+          <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div><span class="detail-label">Horário</span><span class="detail-value">20:30</span></div>
+        </div>
+        <div class="detail-row">
+          <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
+          <div>
+            <span class="detail-label">Local</span>
+            <span class="detail-value">Taj Bar Balneário Camboriú
+              <small>Av. Atlântica, 5710 — Centro, Balneário Camboriú/SC</small>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <span class="tag-individual">Convite individual</span>
+
+      <form class="rsvp" id="rsvpForm" novalidate>
+        <h2>Confirme sua presença</h2>
+
+        <div class="field" id="field-nome">
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name">
+          <div class="field-error">Digite seu nome.</div>
+        </div>
+
+        <div class="field" id="field-instagram">
+          <label for="instagram">Instagram (@usuário)</label>
+          <input type="text" id="instagram" name="instagram" placeholder="@seuinstagram" autocomplete="off">
+          <div class="field-error">Digite seu @ do Instagram.</div>
+        </div>
+
+        <div class="field" id="field-telefone">
+          <label for="telefone">Telefone</label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(47) 99999-9999" autocomplete="tel">
+          <div class="field-error">Digite um telefone válido.</div>
+        </div>
+
+        <div class="field" id="field-presenca">
+          <label>Você confirma presença?</label>
+          <div class="presence-toggle">
+            <button type="button" class="presence-btn" data-value="sim" id="btnSim">Sim, vou!</button>
+            <button type="button" class="presence-btn" data-value="nao" id="btnNao">Não posso ir</button>
+          </div>
+          <div class="field-error">Selecione uma opção.</div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Confirmar presença</button>
+        <p class="form-note">Guarda seu @ certinho — a Ana vai te achar na lista.</p>
+        <button type="button" class="admin-link" id="openAdminBtn">Acessar lista de convidados</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: CONFIRMAÇÃO ANIMADA (SIM) -->
+  <section class="screen" id="screen-confirm">
+    <div class="confirm-wrap">
+      <div class="envelope-scene" id="envelopeScene">
+        <div class="env-back"></div>
+        <div class="wax-half l">A</div>
+        <div class="wax-half r"></div>
+        <div class="env-flap"></div>
+        <div class="env-letter"><span class="env-letter-name" id="envLetterName"></span></div>
+      </div>
+
+      <div class="confirm-card" id="confirmCard">
+        <div class="check-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>
+        </div>
+        <div class="thanks-name" id="guestName">Nome</div>
+        <div class="thanks-title">Presença confirmada</div>
+        <p class="thanks-sub">Obrigada por confirmar! Vai ser uma noite e tanto — te espero lá.</p>
+
+        <div class="addr-box">
+          <div class="detail-row"><svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><div><span class="detail-label">Data e horário</span><span class="detail-value">Sábado, 08/08 às 20:30</span></div></div>
+          <div class="detail-row" style="margin-top:12px;"><svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg><div><span class="detail-label">Endereço</span><span class="detail-value">Taj Bar Balneário Camboriú<small>Av. Atlântica, 5710 — Centro, Balneário Camboriú/SC</small></span></div></div>
+        </div>
+
+        <a class="ics-btn" id="addCalendar" href="#">Adicionar ao calendário</a>
+        <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.86 14.16c-.25.7-1.44 1.34-1.98 1.4-.5.06-1.15.09-1.86-.12-.43-.13-.98-.31-1.69-.61-2.97-1.28-4.91-4.28-5.06-4.48-.15-.2-1.21-1.6-1.21-3.06s.77-2.17 1.04-2.47c.27-.3.6-.37.8-.37h.57c.18 0 .43-.07.67.51.25.6.85 2.08.92 2.23.08.15.13.32.02.52-.1.2-.15.32-.3.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.3.77 1.27 1.65 2.06 1.14 1.02 2.1 1.33 2.4 1.48.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.28.1 1.76.83 2.06.98.3.15.5.23.57.35.08.13.08.75-.17 1.45z"/></svg>
+          Confirmar presença pelo WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: NÃO VAI -->
+  <section class="screen" id="screen-decline">
+    <div class="invite-card decline-card">
+      <div class="eyebrow">Resposta registrada</div>
+      <div class="thanks-title">Vamos sentir sua falta</div>
+      <p class="thanks-sub">Obrigada por avisar, <span id="declineName">—</span>. Sentiremos sua falta na festa dos 20 anos da Ana Carnelos, mas fica o convite para outra vez!</p>
+    </div>
+  </section>
+
+  <!-- PAINEL: LISTA DE CONVIDADOS (protegido por código) -->
+  <section class="screen" id="screen-admin">
+    <div class="admin-card">
+      <div class="admin-header">
+        <h3>Lista de convidados</h3>
+        <button type="button" class="admin-close" id="closeAdminBtn">&times;</button>
+      </div>
+      <div>
+        <span class="admin-count" id="guestCount">0 confirmados</span>
+        <button type="button" class="admin-refresh" id="refreshAdminBtn">Atualizar</button>
+      </div>
+      <div class="guest-list" id="guestList">
+        <div class="admin-loading">Carregando...</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODAL: CÓDIGO DE ACESSO -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box">
+    <h3>Área restrita</h3>
+    <p>Digite o código de acesso para ver a lista de convidados.</p>
+    <input type="password" id="adminCodeInput" placeholder="Código de acesso" autocomplete="off">
+    <div class="modal-error" id="adminCodeError"></div>
+    <div class="modal-actions">
+      <button type="button" class="modal-cancel" id="cancelAdminBtn">Cancelar</button>
+      <button type="button" class="modal-confirm" id="confirmAdminBtn">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ------------------------------------------------------------------
+  // Os dados dos convidados ficam salvos numa função serverless da
+  // Vercel (arquivo api/convidados.js) com banco Redis (Upstash),
+  // conectado pelo painel de Storage do próprio projeto na Vercel.
+  // ------------------------------------------------------------------
+  const API_URL = '/api/convidados';
+
+  // Número da aniversariante para o botão de WhatsApp (formato: DDI+DDD+número, só dígitos)
+  const WHATSAPP_NUMBER = "5547988315538";
+  const WHATSAPP_MSG = "Oi! Passando aqui só pra confirmar a presença no seu aniversário no dia 08/08!";
+
+  // Código de acesso ao painel de convidados
+  const ADMIN_CODE = "ac080826";
+
+  // ------------------------------------------------------------------
+  // Partículas douradas ambiente
+  // ------------------------------------------------------------------
+  const particlesEl = document.getElementById('particles');
+  const N = 22;
+  for (let i = 0; i < N; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.animationDuration = (10 + Math.random() * 12) + 's';
+    s.style.animationDelay = (Math.random() * 10) + 's';
+    s.style.opacity = (0.3 + Math.random() * 0.4).toFixed(2);
+    particlesEl.appendChild(s);
+  }
+
+  // ------------------------------------------------------------------
+  // Toggle presença
+  // ------------------------------------------------------------------
+  const btnSim = document.getElementById('btnSim');
+  const btnNao = document.getElementById('btnNao');
+  let presenca = null;
+
+  btnSim.addEventListener('click', () => {
+    presenca = 'sim';
+    btnSim.classList.add('selected-yes');
+    btnNao.classList.remove('selected-no');
+    document.getElementById('field-presenca').classList.remove('error');
+  });
+  btnNao.addEventListener('click', () => {
+    presenca = 'nao';
+    btnNao.classList.add('selected-no');
+    btnSim.classList.remove('selected-yes');
+    document.getElementById('field-presenca').classList.remove('error');
+  });
+
+  // Máscara simples de telefone BR
+  const telInput = document.getElementById('telefone');
+  telInput.addEventListener('input', () => {
+    let v = telInput.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    telInput.value = v;
+  });
+
+  // Garante que o Instagram sempre comece com @
+  const instagramInput = document.getElementById('instagram');
+  instagramInput.addEventListener('blur', () => {
+    let v = instagramInput.value.trim();
+    if (v && !v.startsWith('@')) v = '@' + v;
+    instagramInput.value = v;
+  });
+
+  // ------------------------------------------------------------------
+  // Envio do formulário
+  // ------------------------------------------------------------------
+  const form = document.getElementById('rsvpForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function setError(fieldId, isError) {
+    document.getElementById(fieldId).classList.toggle('error', isError);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value.trim();
+    let instagram = instagramInput.value.trim();
+    if (instagram && !instagram.startsWith('@')) instagram = '@' + instagram;
+    const telefone = telInput.value.trim();
+
+    let valid = true;
+    if (!nome) { setError('field-nome', true); valid = false; } else setError('field-nome', false);
+    if (instagram.replace('@','').length < 2) { setError('field-instagram', true); valid = false; } else setError('field-instagram', false);
+    if (telefone.replace(/\D/g,'').length < 10) { setError('field-telefone', true); valid = false; } else setError('field-telefone', false);
+    if (!presenca) { document.getElementById('field-presenca').classList.add('error'); valid = false; }
+
+    if (!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    // Salva a confirmação via API da Vercel (Redis)
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, instagram, telefone, presenca })
+      });
+    } catch (err) {
+      console.error('Falha ao salvar confirmação:', err);
+      // Segue o fluxo mesmo se o salvamento falhar, para não travar a experiência do convidado.
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Confirmar presença';
+    document.getElementById('screen-invite').classList.remove('active');
+
+    if (presenca === 'sim') {
+      const primeiroNome = nome.split(' ')[0];
+      document.getElementById('guestName').textContent = nome;
+      document.getElementById('envLetterName').textContent = primeiroNome;
+      const confirmScreen = document.getElementById('screen-confirm');
+      confirmScreen.classList.add('active');
+
+      // Monta link de "adicionar ao calendário" (.ics)
+      const ics = buildICS(nome);
+      const link = document.getElementById('addCalendar');
+      link.href = 'data:text/calendar;charset=utf8,' + encodeURIComponent(ics);
+      link.setAttribute('download', 'aniversario-ana.ics');
+
+      // Monta o link do WhatsApp com a mensagem pré-definida
+      const waLink = document.getElementById('whatsappBtn');
+      waLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MSG)}`;
+
+      // Dispara a animação do envelope
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          document.getElementById('envelopeScene').classList.add('opening');
+        }, 200);
+        setTimeout(() => {
+          document.getElementById('confirmCard').classList.add('show');
+        }, 900);
+      });
+    } else {
+      document.getElementById('declineName').textContent = nome;
+      document.getElementById('screen-decline').classList.add('active');
+    }
+  });
+
+  function buildICS(nome) {
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      'SUMMARY:Aniversário da Ana Carnelos - 20 anos',
+      'DTSTART:20260808T203000',
+      'DTEND:20260809T003000',
+      'LOCATION:Av. Atlântica, 5710 - Centro, Balneário Camboriú/SC',
+      'DESCRIPTION:Convite individual — presença confirmada por ' + nome,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\n');
+  }
+
+  // ------------------------------------------------------------------
+  // PAINEL DE CONVIDADOS (protegido por código)
+  // ------------------------------------------------------------------
+  const adminModal = document.getElementById('adminModal');
+  const adminCodeInput = document.getElementById('adminCodeInput');
+  const adminCodeError = document.getElementById('adminCodeError');
+  const screenAdmin = document.getElementById('screen-admin');
+  const guestListEl = document.getElementById('guestList');
+  const guestCountEl = document.getElementById('guestCount');
+
+  document.getElementById('openAdminBtn').addEventListener('click', () => {
+    adminModal.classList.add('active');
+    adminCodeInput.value = '';
+    adminCodeError.textContent = '';
+    setTimeout(() => adminCodeInput.focus(), 50);
+  });
+  document.getElementById('cancelAdminBtn').addEventListener('click', () => {
+    adminModal.classList.remove('active');
+  });
+  adminCodeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('confirmAdminBtn').click();
+  });
+  document.getElementById('confirmAdminBtn').addEventListener('click', () => {
+    if (adminCodeInput.value.trim() === ADMIN_CODE) {
+      adminModal.classList.remove('active');
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      screenAdmin.classList.add('active');
+      loadGuestList();
+    } else {
+      adminCodeError.textContent = 'Código incorreto. Tente novamente.';
+    }
+  });
+  document.getElementById('closeAdminBtn').addEventListener('click', () => {
+    screenAdmin.classList.remove('active');
+    document.getElementById('screen-invite').classList.add('active');
+  });
+  document.getElementById('refreshAdminBtn').addEventListener('click', loadGuestList);
+
+  async function loadGuestList() {
+    guestListEl.innerHTML = '<div class="admin-loading">Carregando...</div>';
+
+    try {
+      const resp = await fetch(API_URL, {
+        headers: { 'x-admin-code': ADMIN_CODE }
+      });
+      if (!resp.ok) throw new Error('status ' + resp.status);
+      const guests = await resp.json();
+
+      guestCountEl.textContent = `${guests.length} confirmado${guests.length === 1 ? '' : 's'}`;
+
+      if (guests.length === 0) {
+        guestListEl.innerHTML = '<div class="admin-empty">Ninguém confirmou presença ainda.</div>';
+        return;
+      }
+
+      guestListEl.innerHTML = '';
+      guests.forEach(g => guestListEl.appendChild(renderGuestItem(g)));
+    } catch (err) {
+      console.error('Erro ao carregar lista:', err);
+      guestListEl.innerHTML = '<div class="admin-empty">Não foi possível carregar a lista agora. Confira se a API da Vercel está no ar e tente atualizar.</div>';
+      guestCountEl.textContent = '0 confirmados';
+    }
+  }
+
+  function renderGuestItem(guest) {
+    const item = document.createElement('div');
+    item.className = 'guest-item';
+    item.dataset.id = guest.id;
+
+    item.innerHTML = `
+      <div class="view-mode">
+        <div class="g-name">${escapeHtml(guest.nome || '')}</div>
+        <div class="g-meta">${escapeHtml(guest.instagram || '')} · ${escapeHtml(guest.telefone || '')}</div>
+        <div class="guest-actions">
+          <button type="button" class="edit-btn">Editar</button>
+          <button type="button" class="del-btn">Excluir</button>
+        </div>
+      </div>
+    `;
+
+    item.querySelector('.edit-btn').addEventListener('click', () => enterEditMode(item, guest));
+    item.querySelector('.del-btn').addEventListener('click', () => deleteGuest(item, guest.id));
+
+    return item;
+  }
+
+  function enterEditMode(item, guest) {
+    item.classList.add('editing');
+    item.innerHTML = `
+      <input type="text" class="edit-nome" value="${escapeAttr(guest.nome || '')}" placeholder="Nome">
+      <input type="text" class="edit-instagram" value="${escapeAttr(guest.instagram || '')}" placeholder="@instagram">
+      <input type="text" class="edit-telefone" value="${escapeAttr(guest.telefone || '')}" placeholder="Telefone">
+      <div class="guest-actions">
+        <button type="button" class="save-btn">Salvar</button>
+        <button type="button" class="cancel-btn">Cancelar</button>
+      </div>
+    `;
+    item.querySelector('.save-btn').addEventListener('click', () => saveGuestEdit(item, guest.id));
+    item.querySelector('.cancel-btn').addEventListener('click', loadGuestList);
+  }
+
+  async function saveGuestEdit(item, id) {
+    const nome = item.querySelector('.edit-nome').value.trim();
+    let instagram = item.querySelector('.edit-instagram').value.trim();
+    if (instagram && !instagram.startsWith('@')) instagram = '@' + instagram;
+    const telefone = item.querySelector('.edit-telefone').value.trim();
+
+    try {
+      const resp = await fetch(API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-code': ADMIN_CODE },
+        body: JSON.stringify({ id, nome, instagram, telefone })
+      });
+      if (!resp.ok) throw new Error('status ' + resp.status);
+      loadGuestList();
+    } catch (err) {
+      console.error('Erro ao salvar edição:', err);
+      alert('Não foi possível salvar. Tente novamente.');
+    }
+  }
+
+  async function deleteGuest(item, id) {
+    if (!confirm('Remover este convidado da lista?')) return;
+    try {
+      const resp = await fetch(API_URL, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'x-admin-code': ADMIN_CODE },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) throw new Error('status ' + resp.status);
+      item.remove();
+      loadGuestList();
+    } catch (err) {
+      console.error('Erro ao excluir:', err);
+      alert('Não foi possível excluir. Tente novamente.');
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function escapeAttr(str) {
+    return escapeHtml(str);
+  }
+</script>
+
+</body>
+</html>
